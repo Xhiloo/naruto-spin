@@ -632,16 +632,14 @@ async function fetchBackstory(results) {
     .map(([k, v]) => `${k}: ${v}`)
     .join("\n");
 
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
+  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
     headers: {
-  "Content-Type": "application/json",
-  "x-api-key": process.env.REACT_APP_ANTHROPIC_KEY || "",
-  "anthropic-version": "2023-06-01",
-  "anthropic-dangerous-direct-browser-access": "true",
-},
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${process.env.REACT_APP_GROQ_KEY}`,
+    },
     body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
+      model: "llama-3.3-70b-versatile",
       max_tokens: 500,
       messages: [{
         role: "user",
@@ -656,7 +654,7 @@ async function fetchBackstory(results) {
   }
 
   const data = await res.json();
-  const text = data?.content?.[0]?.text;
+  const text = data?.choices?.[0]?.message?.content;
   if (!text) throw new Error("Empty response from API");
   return text;
 }
