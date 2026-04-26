@@ -640,10 +640,10 @@ async function fetchBackstory(results) {
     },
     body: JSON.stringify({
       model: "llama-3.3-70b-versatile",
-      max_tokens: 500,
+      max_tokens: 2000,
       messages: [{
         role: "user",
-        content: `Kamu adalah penulis lore Naruto kelas dunia. Tulis kisah latar belakang (backstory) seorang shinobi dalam Bahasa Indonesia yang gelap, mendalam, dan imersif — sepanjang 350 hingga 400 kata — berdasarkan stats berikut:\n\n${summary}\n\nStruktur cerita WAJIB mencakup:\n\n1. ASAL-USUL: Ceritakan desa asalnya, bagaimana suasana klan dan keluarganya saat ia kecil, serta bagaimana lingkungan membentuk kepribadiannya.\n\n2. LUKA MASA KECIL: Satu peristiwa traumatis atau momen paling menentukan di masa kecilnya yang mengubah segalanya — bisa kehilangan, pengkhianatan, atau kejadian tragis. Ceritakan dengan detail emosional yang kuat.\n\n3. KEBANGKITAN KEKUATAN: Bagaimana ia pertama kali menemukan atau membangkitkan kemampuan klannya. Dalam situasi apa, dengan perasaan seperti apa.\n\n4. JALAN NINJA: Filosofi bertarungnya, apa yang ia perjuangkan, siapa yang ia lindungi atau benci, dan bagaimana ia memandang dunia shinobi.\n\n5. BAYANGAN MASA DEPAN: Akhiri dengan SATU kalimat ramalan atau kalimat gelap yang terasa seperti firasat tentang takdir yang menantinya.\n\nAturan penulisan:\n- Gunakan Bahasa Indonesia yang kaya, sastrawi, dan dramatis\n- DILARANG pakai kalimat klise seperti "ia lahir sebagai pejuang" atau "ia berlatih keras"\n- Sebutkan nama tempat spesifik di dunia Naruto\n- Buat karakter ini terasa nyata, bukan seperti template\n- Tulis dalam format prosa mengalir, bukan poin-poin\n- Jangan gunakan judul atau header, langsung cerita,Buatkan Backstory dalam bahasa Indonesia`
+        content: `Kamu adalah penulis lore Naruto kelas dunia yang sangat menguasai seluruh lore anime dan manga Naruto, Naruto Shippuden, dan Boruto. Tulis kisah latar belakang (backstory) seorang shinobi BARU (bukan karakter yang sudah ada) dalam Bahasa Indonesia yang gelap, mendalam, dan imersif — sepanjang 500 hingga 600 kata — berdasarkan stats berikut:\n\n${summary}\n\nStruktur cerita WAJIB mencakup semua bagian ini secara mengalir:\n\n1. ASAL-USUL: Ceritakan desanya secara spesifik (sebut nama desa di dunia Naruto yang sesuai), suasana klan saat ia kecil, hubungannya dengan keluarga, dan bagaimana lingkungan klan membentuk wataknya sejak dini.\n\n2. LUKA MASA KECIL: Satu peristiwa traumatis paling menentukan — kehilangan orang yang dicintai, pengkhianatan, kekalahan memalukan, atau kejadian yang membuatnya mempertanyakan segalanya. Tulis dengan detail emosional yang dalam dan spesifik, bukan sekadar "ia kehilangan orang tuanya".\n\n3. KEBANGKITAN KEKUATAN: Momen pertama ia membangkitkan kemampuan klan atau jutsu utamanya. Gambarkan sensasinya, situasinya, dan apa yang berubah dalam dirinya setelah momen itu.\n\n4. JALAN NINJA: Filosofi hidup dan bertarungnya — bukan sekadar "ia ingin jadi kuat" tapi sesuatu yang lebih kompleks dan manusiawi. Ceritakan pandangannya tentang kawan, musuh, dan arti menjadi shinobi.\n\n5. BAYANGAN MASA DEPAN: Tutup dengan satu kalimat terakhir yang terasa seperti ramalan gelap — ominous, puitis, dan membuat pembaca ingin tahu apa yang terjadi selanjutnya.\n\nAturan keras:\n- Gunakan Bahasa Indonesia yang sastrawi, kaya, dan dramatis — bukan bahasa sehari-hari\n- DILARANG KERAS frasa klise: "ia lahir sebagai pejuang", "ia berlatih keras setiap hari", "takdir memanggilnya"\n- Sebutkan nama tempat, klan, dan elemen spesifik dunia Naruto yang relevan dengan stats karakternya\n- Karakter ini harus terasa seperti orang nyata dengan luka nyata — bukan tokoh generik\n- Tulis dalam format prosa mengalir tanpa judul, tanpa nomor, tanpa bullet point\n- JANGAN potong di tengah kalimat — selesaikan cerita sampai tuntas`
       }]
     })
   });
@@ -671,10 +671,19 @@ async function fetchExplanation(label, value) {
     },
     body: JSON.stringify({
       model: "llama-3.3-70b-versatile",
-      max_tokens: 180,
+      max_tokens: 400,
       messages: [{
         role: "user",
-        content: `Kamu adalah pakar lore Naruto. Jelaskan "${value}" (kategori: ${label}) dalam 2-3 kalimat singkat dalam Bahasa Indonesia yang menarik dan informatif. Jelaskan apa itu, kelebihannya, dan siapa yang terkenal memilikinya di dunia Naruto. Jangan pakai bullet point, langsung paragraf singkat saja.`
+        content: `Kamu adalah ensiklopedia hidup dunia Naruto yang menguasai seluruh lore dari anime, manga, Naruto Shippuden, hingga Boruto secara akurat dan mendalam.
+
+Jelaskan "${value}" dalam konteks kategori "${label}" dari universe Naruto — dalam Bahasa Indonesia yang informatif, akurat, dan menarik. Panjang: 3-4 kalimat penuh yang tidak terpotong.
+
+Sertakan dalam penjelasan:
+- Apa itu dan bagaimana cara kerjanya secara akurat sesuai lore Naruto
+- Mengapa ini istimewa atau berbahaya dibanding yang lain
+- Siapa karakter terkenal yang memiliki/menggunakan ini di Naruto/Naruto Shippuden
+
+PENTING: Hanya jelaskan hal-hal yang BENAR-BENAR ada dan akurat di universe Naruto. Jangan mengarang fakta. Jika ini teknik atau kemampuan, jelaskan mekanismenya. Tulis dalam paragraf mengalir tanpa bullet point. SELESAIKAN kalimat terakhir dengan tuntas.`
       }]
     })
   });
