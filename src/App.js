@@ -660,6 +660,104 @@ async function fetchBackstory(results) {
 }
 
 // ═══════════════════════════════════════════════════════
+//  PENJELASAN per item via Groq
+// ═══════════════════════════════════════════════════════
+async function fetchExplanation(label, value) {
+  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${process.env.REACT_APP_GROQ_KEY}`,
+    },
+    body: JSON.stringify({
+      model: "llama-3.3-70b-versatile",
+      max_tokens: 180,
+      messages: [{
+        role: "user",
+        content: `Kamu adalah pakar lore Naruto. Jelaskan "${value}" (kategori: ${label}) dalam 2-3 kalimat singkat dalam Bahasa Indonesia yang menarik dan informatif. Jelaskan apa itu, kelebihannya, dan siapa yang terkenal memilikinya di dunia Naruto. Jangan pakai bullet point, langsung paragraf singkat saja.`
+      }]
+    })
+  });
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  const data = await res.json();
+  const text = data?.choices?.[0]?.message?.content;
+  if (!text) throw new Error("Kosong");
+  return text;
+}
+
+// ═══════════════════════════════════════════════════════
+//  STAT ROW dengan tombol penjelasan
+// ═══════════════════════════════════════════════════════
+function StatRow({ s, v, idx }) {
+  const [open,    setOpen]    = useState(false);
+  const [text,    setText]    = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error,   setError]   = useState("");
+
+  const toggle = async () => {
+    if (open) { setOpen(false); return; }
+    setOpen(true);
+    if (text) return; // sudah di-cache, tidak perlu fetch lagi
+    setLoading(true); setError("");
+    try {
+      const t = await fetchExplanation(s.label, v);
+      setText(t);
+    } catch (e) {
+      setError("Gagal memuat penjelasan.");
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="cr" style={{ animationDelay: `${idx * 0.03}s` }}>
+      {/* Baris utama */}
+      <div style={{
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        background: "#0d0d0d", borderRadius: open ? "8px 8px 0 0" : 8,
+        padding: "9px 14px", border: "1px solid #141414",
+        borderBottom: open ? "1px solid #1e1e1e" : "1px solid #141414", gap: 12
+      }}>
+        <span style={{ color: "#3a3a3a", fontSize: 9, letterSpacing: 2, minWidth: 140, flexShrink: 0 }}>
+          {s.emoji}  {s.label}
+        </span>
+        <span style={{ color: "#ff6b2b", fontWeight: 700, fontSize: 11, textAlign: "right", flex: 1 }}>{v}</span>
+        {/* Tombol info */}
+        <button onClick={toggle} title="Lihat penjelasan" style={{
+          background: open ? "#ff6b2b22" : "none",
+          border: `1px solid ${open ? "#ff6b2b66" : "#2a2a2a"}`,
+          color: open ? "#ff6b2b" : "#3a3a3a", borderRadius: 6,
+          width: 22, height: 22, cursor: "pointer", fontSize: 11,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          flexShrink: 0, transition: "all .2s", fontFamily: "monospace"
+        }}>ℹ</button>
+      </div>
+
+      {/* Panel penjelasan */}
+      {open && (
+        <div style={{
+          background: "#0a0a0a", border: "1px solid #141414", borderTop: "none",
+          borderRadius: "0 0 8px 8px", padding: "10px 14px",
+          animation: "fadeUp .25s ease"
+        }}>
+          {loading && (
+            <div style={{ fontSize: 10, color: "#444", letterSpacing: 2, animation: "blink 1s ease infinite" }}>
+              ⏳  Memuat penjelasan...
+            </div>
+          )}
+          {error && <div style={{ fontSize: 10, color: "#c0392b" }}>⚠ {error}</div>}
+          {text && (
+            <p style={{
+              margin: 0, fontSize: 11.5, lineHeight: 1.85,
+              color: "#a09890", fontFamily: "Georgia, serif"
+            }}>{text}</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
 //  RESULT CARD
 // ═══════════════════════════════════════════════════════
 function ResultCard({ results, onReset }) {
@@ -721,19 +819,7 @@ function ResultCard({ results, onReset }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
           {stages.map((s, idx) => {
             const v = results[s.id]; if (!v) return null;
-            return (
-              <div key={s.id} className="cr" style={{
-                animationDelay: `${idx * 0.03}s`,
-                display: "flex", justifyContent: "space-between", alignItems: "center",
-                background: "#0d0d0d", borderRadius: 8, padding: "9px 14px",
-                border: "1px solid #141414", gap: 12
-              }}>
-                <span style={{ color: "#3a3a3a", fontSize: 9, letterSpacing: 2, minWidth: 140, flexShrink: 0 }}>
-                  {s.emoji}  {s.label}
-                </span>
-                <span style={{ color: "#ff6b2b", fontWeight: 700, fontSize: 11, textAlign: "right" }}>{v}</span>
-              </div>
-            );
+            return <StatRow key={s.id} s={s} v={v} idx={idx} />;
           })}
         </div>
 
